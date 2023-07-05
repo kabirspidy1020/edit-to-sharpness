@@ -13,41 +13,29 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 def process_image(filename, operation):
-    print(f"the operation is {operation} and file name is {filename}")
-    img=cv2.imread(f"uploads/{filename}")
-    match operation:
-        case "greyscale":
-            imgprocessed=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            cv2.imwrite(f"static/{filename}", imgprocessed)
-        case "sketch":
-            #image = cv2.imread('/content/prakhar professional.jpeg')  # loads an image from the specified file
-            # convert an image from one color space to another
-            grey_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            invert = cv2.bitwise_not(grey_img)  # helps in masking of the image
-            # sharp edges in images are smoothed while minimizing too much blurring
-            blur = cv2.GaussianBlur(invert, (21, 21), 0)
-            invertedblur = cv2.bitwise_not(blur)
-            sketch = cv2.divide(grey_img, invertedblur, scale=256.0)
-            cv2.imwrite(f"static/{filename}", sketch)
-        case "bgremove":
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    print("the operation is {} and file name is {}".format(operation, filename))
+    img = cv2.imread(f"uploads/{filename}")
 
-            # Apply thresholding to create a binary image
-            _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-
-            # Find contours of the objects in the binary image
-            contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-            # Create a mask for the background
-            mask = cv2.drawContours(np.zeros_like(gray), contours, -1, (255), thickness=cv2.FILLED)
-
-            # Apply the mask to the original image
-            result_image = cv2.bitwise_and(img, img, mask=mask)
-            cv2.imwrite(f"static/{filename}", result_image)
+    if operation == "greyscale":
+        imgprocessed = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        cv2.imwrite(f"static/{filename}", imgprocessed)
+    elif operation == "sketch":
+        grey_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        invert = cv2.bitwise_not(grey_img)
+        blur = cv2.GaussianBlur(invert, (21, 21), 0)
+        invertedblur = cv2.bitwise_not(blur)
+        sketch = cv2.divide(grey_img, invertedblur, scale=256.0)
+        cv2.imwrite(f"static/{filename}", sketch)
+    elif operation == "bgremove":
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        mask = cv2.drawContours(np.zeros_like(gray), contours, -1, (255), thickness=cv2.FILLED)
+        result_image = cv2.bitwise_and(img, img, mask=mask)
+        cv2.imwrite(f"static/{filename}", result_image)
+    else:
+        print("Invalid operation")
             
-
-
-
 @app.route('/')
 def home():
     return render_template("index.html")
