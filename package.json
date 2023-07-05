@@ -1,0 +1,11 @@
+{
+  "name": "edit-to-sharpness",
+  "version": "1.0.0",
+  "description": "Your app description",
+  "scripts": {
+    "start": "python3 index.py"
+  },
+  "dependencies": {
+    "your-npm-dependency": "3.8"
+  }
+}
