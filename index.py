@@ -13,7 +13,6 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 def process_image(filename, operation):
-    print("the operation is {} and file name is {}".format(operation, filename))
     img = cv2.imread(f"uploads/{filename}")
 
     if operation == "greyscale":
